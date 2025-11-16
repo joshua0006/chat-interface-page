@@ -12,12 +12,12 @@ export default function TimelineHero() {
   ]
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background pt-12 md:pt-16 pb-12">
+    <div className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-background to-background py-6 md:py-8">
       {/* Animated background grid with parallax */}
       <motion.div
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-10"
         initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 0.2, y: 0 }}
+        animate={{ opacity: 0.1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <div className="absolute inset-0 bg-[linear-gradient(0deg,transparent_24%,hsl(var(--primary)/0.1)_25%,hsl(var(--primary)/0.1)_26%,transparent_27%,transparent_74%,hsl(var(--primary)/0.1)_75%,hsl(var(--primary)/0.1)_76%,transparent_77%,transparent)] bg-[size:50px_50px]" />
@@ -25,7 +25,7 @@ export default function TimelineHero() {
 
       <div className="relative mx-auto max-w-6xl px-6 text-center">
         <motion.h1
-          className="mb-2 text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl"
+          className="mb-1 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl"
           style={{ fontFamily: "'Playfair Display', serif" }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -38,7 +38,7 @@ export default function TimelineHero() {
         </motion.h1>
 
         <motion.p
-          className="mb-8 text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed"
+          className="mb-4 text-sm md:text-base text-foreground/70 max-w-2xl mx-auto leading-relaxed"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -47,7 +47,7 @@ export default function TimelineHero() {
         </motion.p>
 
         <motion.div
-          className="flex flex-wrap justify-center gap-3 md:gap-4 text-xs md:text-sm font-medium text-foreground/60"
+          className="flex flex-wrap justify-center gap-2 md:gap-3 text-xs font-medium text-foreground/60"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -55,7 +55,7 @@ export default function TimelineHero() {
           {eras.map((era, index) => (
             <motion.div
               key={era.name}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/50 border border-border/50 backdrop-blur-sm hover:bg-card/80 transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card/50 border border-border/50 backdrop-blur-sm hover:bg-card/80 transition-colors"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{
@@ -65,7 +65,7 @@ export default function TimelineHero() {
               }}
             >
               <motion.div
-                className={`w-2 h-2 rounded-full ${era.color}`}
+                className={`w-1.5 h-1.5 rounded-full ${era.color}`}
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{
                   duration: 2,

@@ -125,6 +125,13 @@
     @apply bg-background text-foreground;
   }
 
+  /* Viewport Height Strategy
+   * Using dvh (Dynamic Viewport Height) for better mobile browser support
+   * - dvh accounts for dynamic UI elements (address bar, bottom nav)
+   * - Fallback: h-screen provides vh for older browsers
+   * - Support: iOS Safari 15.4+, Chrome 108+, Firefox 110+
+   */
+
   /* Vintage font imports for era aesthetics */
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@400;600&family=Inconsolata:wght@400;700&display=swap');
 

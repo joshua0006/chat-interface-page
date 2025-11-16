@@ -10,13 +10,13 @@ export default function Home() {
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="h-screen [height:100dvh] bg-background text-foreground flex flex-col overflow-hidden">
       {!selectedCharacter && <Navbar />}
       {!selectedCharacter ? (
-        <>
+        <div className="flex-1 flex flex-col overflow-y-auto">
           <TimelineHero />
           <CharacterSelector onSelectCharacter={setSelectedCharacter} />
-        </>
+        </div>
       ) : (
         <ChatInterface characterId={selectedCharacter} onBack={() => setSelectedCharacter(null)} />
       )}

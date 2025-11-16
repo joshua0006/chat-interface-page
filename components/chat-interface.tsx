@@ -91,7 +91,7 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
 
   return (
     <motion.div
-      className="h-screen flex flex-col bg-background"
+      className="flex-1 flex flex-col bg-background overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

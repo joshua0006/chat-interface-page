@@ -6,12 +6,12 @@ import { ThemeToggle } from './theme-toggle'
 export function Navbar() {
   return (
     <motion.nav
-      className="sticky top-0 z-50 border-b border-border/50 backdrop-blur-lg bg-background/80"
+      className="flex-shrink-0 h-14 md:h-16 sticky top-0 z-50 border-b border-border/50 backdrop-blur-lg bg-background/80"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="w-full px-4 md:px-6 lg:px-8 xl:px-12 py-3 flex items-center justify-between">
+      <div className="w-full h-full px-4 md:px-6 lg:px-8 xl:px-12 flex items-center justify-between">
         <motion.div
           className="flex items-center gap-2"
           initial={{ opacity: 0, x: -20 }}
