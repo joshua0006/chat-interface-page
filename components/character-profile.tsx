@@ -2,6 +2,7 @@
 
 import { Character } from '@/lib/character-data';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface CharacterProfileProps {
   character: Character;
@@ -28,12 +29,18 @@ export default function CharacterProfile({ character }: CharacterProfileProps) {
     >
       {/* Avatar */}
       <motion.div
-        className={`w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-5xl ${eraStyle.accent} border-2 ${eraStyle.border}`}
+        className={`relative w-24 h-24 rounded-lg mx-auto mb-4 overflow-hidden ${eraStyle.accent} border-2 ${eraStyle.border}`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        {character.avatar}
+        <Image
+          src={character.avatar}
+          alt={character.name}
+          fill
+          className="object-cover"
+          sizes="96px"
+        />
       </motion.div>
 
       {/* Name and Era */}

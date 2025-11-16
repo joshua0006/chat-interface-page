@@ -2,6 +2,7 @@
 
 import { Character } from '@/lib/character-data';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -78,11 +79,17 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
         <CardContent className="relative h-full flex flex-col items-center justify-center text-center p-4 gap-0">
           {/* Avatar/Logo */}
           <motion.div
-            className="text-4xl md:text-5xl mb-3"
+            className="relative w-20 h-20 md:w-24 md:h-24 mb-3 overflow-hidden rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
-            {character.avatar}
+            <Image
+              src={character.avatar}
+              alt={character.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 80px, 96px"
+            />
           </motion.div>
 
           {/* Character Name */}

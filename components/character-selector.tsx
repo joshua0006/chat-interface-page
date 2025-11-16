@@ -2,7 +2,6 @@
 
 import { characterData } from '@/lib/character-data';
 import CharacterCard from './character-card';
-import { motion } from 'framer-motion';
 
 interface CharacterSelectorProps {
   onSelectCharacter: (characterId: string) => void;
@@ -10,23 +9,18 @@ interface CharacterSelectorProps {
 
 export default function CharacterSelector({ onSelectCharacter }: CharacterSelectorProps) {
   return (
-    <div className="flex-1 py-6 md:py-8 px-4 md:px-6">
+    <div className="flex-1 py-4 md:py-6 px-4 md:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          className="mb-6 md:mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 md:mb-3 bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent" style={{ fontFamily: "'Cinzel', serif" }}>
-            Select Your Guide Through Time
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-semibold mb-2 text-foreground" style={{ fontFamily: "'Cinzel', serif" }}>
+            Select Your Guide
           </h2>
-          <p className="text-foreground/60 max-w-2xl text-sm md:text-base leading-relaxed">
-            Each character offers unique perspectives shaped by their era. Choose wisely and explore their wisdom.
+          <p className="text-foreground/50 text-xs md:text-sm">
+            Choose a character to begin your conversation
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 pb-6">
           {characterData.map((character, index) => (
             <CharacterCard
               key={character.id}

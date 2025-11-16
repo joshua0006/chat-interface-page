@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { characterData } from '@/lib/character-data';
 import ChatMessage from './chat-message';
 import CharacterProfile from './character-profile';
@@ -133,14 +134,21 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
               >
                 {/* Animated glow ring */}
                 <motion.div
-                  className={`absolute -inset-2 rounded-full ${eraStyle.bg} opacity-50 blur-md`}
+                  className={`absolute -inset-2 rounded-lg ${eraStyle.bg} opacity-50 blur-md`}
                   animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 />
 
                 {/* Avatar */}
-                <div className={`relative w-12 h-12 md:w-16 md:h-16 rounded-full ${eraStyle.bg} border-2 ${eraStyle.border} flex items-center justify-center text-2xl md:text-4xl backdrop-blur-sm shadow-lg`}>
-                  {character.avatar}
+                <div className={`relative w-12 h-12 md:w-16 md:h-16 rounded-lg ${eraStyle.bg} border-2 ${eraStyle.border} overflow-hidden backdrop-blur-sm shadow-lg`}>
+                  <Image
+                    src={character.avatar}
+                    alt={character.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 48px, 64px"
+                    priority
+                  />
                 </div>
               </motion.div>
 
