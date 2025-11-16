@@ -2,6 +2,8 @@
 
 import { Character } from '@/lib/character-data';
 import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface CharacterCardProps {
   character: Character;
@@ -10,41 +12,36 @@ interface CharacterCardProps {
 }
 
 export default function CharacterCard({ character, onSelect, index = 0 }: CharacterCardProps) {
-  const eraColors: Record<string, { border: string; bg: string; accent: string; logo: string; glow: string }> = {
+  const eraColors: Record<string, { border: string; bg: string; accent: string; shadow: string }> = {
     ancient: {
       border: 'border-amber-500/30',
       bg: 'bg-amber-500/5',
       accent: 'text-amber-500',
-      logo: '⚱',
-      glow: 'hover:shadow-amber-500/20'
+      shadow: 'shadow-amber-500/20'
     },
     medieval: {
       border: 'border-gray-500/30',
       bg: 'bg-gray-500/5',
       accent: 'text-gray-400',
-      logo: '⚔',
-      glow: 'hover:shadow-gray-500/20'
+      shadow: 'shadow-gray-500/20'
     },
     victorian: {
       border: 'border-purple-500/30',
       bg: 'bg-purple-500/5',
       accent: 'text-purple-400',
-      logo: '🎩',
-      glow: 'hover:shadow-purple-500/20'
+      shadow: 'shadow-purple-500/20'
     },
     futurist: {
       border: 'border-cyan-500/30',
       bg: 'bg-cyan-500/5',
       accent: 'text-cyan-400',
-      logo: '🚀',
-      glow: 'hover:shadow-cyan-500/20'
+      shadow: 'shadow-cyan-500/20'
     },
     future_ai: {
       border: 'border-indigo-500/30',
       bg: 'bg-indigo-500/5',
       accent: 'text-indigo-400',
-      logo: '⚡',
-      glow: 'hover:shadow-indigo-500/20'
+      shadow: 'shadow-indigo-500/20'
     },
   };
 
@@ -53,7 +50,7 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
   return (
     <motion.div
       onClick={onSelect}
-      className="relative group cursor-pointer h-full"
+      className="h-full"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -61,55 +58,54 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
         delay: index * 0.1,
         ease: [0.16, 1, 0.3, 1],
       }}
-      whileHover={{ scale: 1.02, y: -4 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.03, y: -4 }}
+      whileTap={{ scale: 0.97 }}
     >
-      {/* Glassmorphism card background */}
-      <div className={`absolute inset-0 rounded-xl ${eraStyle.bg} border ${eraStyle.border} backdrop-blur-sm transition-all duration-500 group-hover:border-opacity-60 ${eraStyle.glow} group-hover:shadow-xl`} />
+      <Card
+        className={`
+          h-48 md:h-56 cursor-pointer group relative overflow-hidden
+          backdrop-blur-lg bg-background/30 border-2 ${eraStyle.border}
+          transition-all duration-300
+          hover:${eraStyle.shadow} hover:shadow-xl hover:border-opacity-80
+        `}
+      >
+        {/* Glassmorphism overlay */}
+        <div className={`absolute inset-0 ${eraStyle.bg} opacity-40 group-hover:opacity-60 transition-opacity duration-300`} />
 
-      {/* Gradient overlay on hover */}
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-card/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* Gradient overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-card/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      <div className="relative p-6 h-full flex flex-col">
-        {/* Era Logo */}
-        <motion.div
-          className="text-4xl md:text-5xl mb-4"
-          whileHover={{ scale: 1.15, rotate: 12 }}
-          transition={{ type: "spring", stiffness: 300, damping: 15 }}
-        >
-          {eraStyle.logo}
-        </motion.div>
-
-        {/* Character Name */}
-        <h3 className={`text-lg md:text-xl font-bold mb-2 ${eraStyle.accent} transition-all duration-300 group-hover:brightness-125`} style={{ fontFamily: "'Cinzel', serif" }}>
-          {character.name}
-        </h3>
-
-        {/* Era Badge */}
-        <div className={`inline-flex text-xs font-medium ${eraStyle.accent} opacity-70 mb-3 px-2 py-1 rounded-full bg-card/50 border border-border/30 w-fit`}>
-          {character.eraLabel}
-        </div>
-
-        {/* Personality Traits */}
-        <p className="text-xs md:text-sm text-foreground/60 mb-4 flex-grow line-clamp-3 leading-relaxed">
-          {character.traits.join(' • ')}
-        </p>
-
-        {/* Interact Button */}
-        <motion.button
-          className={`mt-auto px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 border ${eraStyle.border} ${eraStyle.accent} hover:bg-current hover:text-background group-hover:shadow-lg relative overflow-hidden`}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <span className="relative z-10">Begin Conversation</span>
+        <CardContent className="relative h-full flex flex-col items-center justify-center text-center p-4 gap-0">
+          {/* Avatar/Logo */}
           <motion.div
-            className="absolute inset-0 bg-current"
-            initial={{ x: '-100%' }}
-            whileHover={{ x: 0 }}
-            transition={{ duration: 0.3 }}
-          />
-        </motion.button>
-      </div>
+            className="text-4xl md:text-5xl mb-3"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ type: "spring", stiffness: 300, damping: 15 }}
+          >
+            {character.avatar}
+          </motion.div>
+
+          {/* Character Name */}
+          <h3
+            className={`text-sm md:text-base font-bold mb-2 ${eraStyle.accent} transition-all duration-300 group-hover:brightness-125 leading-tight`}
+            style={{ fontFamily: "'Cinzel', serif" }}
+          >
+            {character.name}
+          </h3>
+
+          {/* Era Badge */}
+          <Badge
+            variant="outline"
+            className={`
+              ${eraStyle.border} ${eraStyle.accent} bg-background/50
+              backdrop-blur-sm text-xs border-current/30
+              group-hover:border-current/60 transition-all
+            `}
+          >
+            {character.eraLabel}
+          </Badge>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 }
