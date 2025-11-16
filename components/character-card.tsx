@@ -13,34 +13,29 @@ interface CharacterCardProps {
 }
 
 export default function CharacterCard({ character, onSelect, index = 0 }: CharacterCardProps) {
-  const eraColors: Record<string, { border: string; bg: string; accent: string; shadow: string }> = {
+  const eraColors: Record<string, { border: string; accent: string; shadow: string }> = {
     ancient: {
       border: 'border-amber-500/30',
-      bg: 'bg-amber-500/5',
       accent: 'text-amber-500',
       shadow: 'shadow-amber-500/20'
     },
     medieval: {
       border: 'border-gray-500/30',
-      bg: 'bg-gray-500/5',
       accent: 'text-gray-400',
       shadow: 'shadow-gray-500/20'
     },
     victorian: {
       border: 'border-purple-500/30',
-      bg: 'bg-purple-500/5',
       accent: 'text-purple-400',
       shadow: 'shadow-purple-500/20'
     },
     futurist: {
       border: 'border-cyan-500/30',
-      bg: 'bg-cyan-500/5',
       accent: 'text-cyan-400',
       shadow: 'shadow-cyan-500/20'
     },
     future_ai: {
       border: 'border-indigo-500/30',
-      bg: 'bg-indigo-500/5',
       accent: 'text-indigo-400',
       shadow: 'shadow-indigo-500/20'
     },
@@ -64,37 +59,33 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
     >
       <Card
         className={`
-          h-56 md:h-64 cursor-pointer group relative overflow-hidden
-          backdrop-blur-lg bg-background/30 border-2 ${eraStyle.border}
+          cursor-pointer group relative overflow-hidden
+          bg-transparent border-2 ${eraStyle.border}
           transition-all duration-300
           hover:${eraStyle.shadow} hover:shadow-xl hover:border-opacity-80
+          p-0
         `}
       >
-        {/* Glassmorphism overlay */}
-        <div className={`absolute inset-0 ${eraStyle.bg} opacity-40 group-hover:opacity-60 transition-opacity duration-300`} />
+        {/* Full-bleed Image - Natural Aspect Ratio */}
+        <div className="relative w-full">
+          <Image
+            src={character.avatar}
+            alt={character.name}
+            width={800}
+            height={800}
+            className="w-full h-auto"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 20vw"
+          />
+        </div>
 
-        {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-card/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Bottom Gradient Overlay */}
+        <div className="absolute inset-x-0 bottom-0 h-28 md:h-32 bg-gradient-to-t from-black/90 via-black/60 to-transparent transition-all duration-300" />
 
-        <CardContent className="relative h-full flex flex-col items-center justify-center text-center p-3 gap-0">
-          {/* Avatar/Logo */}
-          <motion.div
-            className="relative w-32 h-32 md:w-40 md:h-40 mb-3 overflow-hidden rounded-lg"
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          >
-            <Image
-              src={character.avatar}
-              alt={character.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 128px, 160px"
-            />
-          </motion.div>
-
+        {/* Text Content - Left Aligned */}
+        <CardContent className="absolute bottom-0 left-0 right-0 flex flex-col items-start text-left p-3 md:p-4 gap-1 z-10">
           {/* Character Name */}
           <h3
-            className={`text-sm md:text-base font-bold mb-2 ${eraStyle.accent} transition-all duration-300 group-hover:brightness-125 leading-tight`}
+            className={`text-base md:text-lg font-bold text-white drop-shadow-lg transition-all duration-300 group-hover:brightness-125 leading-tight`}
             style={{ fontFamily: "'Cinzel', serif" }}
           >
             {character.name}
@@ -104,9 +95,10 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
           <Badge
             variant="outline"
             className={`
-              ${eraStyle.border} ${eraStyle.accent} bg-background/50
-              backdrop-blur-sm text-xs border-current/30
-              group-hover:border-current/60 transition-all
+              ${eraStyle.border} bg-black/30
+              backdrop-blur-sm text-xs border-current/40 text-white
+              group-hover:border-current/70 transition-all
+              w-fit
             `}
           >
             {character.eraLabel}
