@@ -64,7 +64,7 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
     >
       <Card
         className={`
-          h-48 md:h-56 cursor-pointer group relative overflow-hidden
+          h-56 md:h-64 cursor-pointer group relative overflow-hidden
           backdrop-blur-lg bg-background/30 border-2 ${eraStyle.border}
           transition-all duration-300
           hover:${eraStyle.shadow} hover:shadow-xl hover:border-opacity-80
@@ -76,10 +76,10 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-br from-card/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        <CardContent className="relative h-full flex flex-col items-center justify-center text-center p-4 gap-0">
+        <CardContent className="relative h-full flex flex-col items-center justify-center text-center p-3 gap-0">
           {/* Avatar/Logo */}
           <motion.div
-            className="relative w-20 h-20 md:w-24 md:h-24 mb-3 overflow-hidden rounded-lg"
+            className="relative w-32 h-32 md:w-40 md:h-40 mb-3 overflow-hidden rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
@@ -88,7 +88,7 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
               alt={character.name}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 80px, 96px"
+              sizes="(max-width: 768px) 128px, 160px"
             />
           </motion.div>
 

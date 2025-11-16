@@ -29,7 +29,7 @@ export default function CharacterProfile({ character }: CharacterProfileProps) {
     >
       {/* Avatar */}
       <motion.div
-        className={`relative w-24 h-24 rounded-lg mx-auto mb-4 overflow-hidden ${eraStyle.accent} border-2 ${eraStyle.border}`}
+        className={`relative w-32 h-32 md:w-40 md:h-40 rounded-lg mx-auto mb-4 overflow-hidden ${eraStyle.accent} border-2 ${eraStyle.border}`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4, delay: 0.1 }}
@@ -39,7 +39,7 @@ export default function CharacterProfile({ character }: CharacterProfileProps) {
           alt={character.name}
           fill
           className="object-cover"
-          sizes="96px"
+          sizes="(max-width: 768px) 128px, 160px"
         />
       </motion.div>
 
