@@ -79,6 +79,7 @@
 }
 
 @theme inline {
+  --font-serif: 'Fraunces', 'Georgia', serif;
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
@@ -123,6 +124,32 @@
   }
   body {
     @apply bg-background text-foreground;
+    position: relative;
+    font-family: var(--font-serif);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+  }
+
+  /* Minimal Background Texture */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+    background-image:
+      radial-gradient(circle at 20% 30%, oklch(var(--primary) / 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, oklch(var(--primary) / 0.12) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, oklch(var(--primary) / 0.05) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-blend-mode: soft-light;
   }
 
   /* Viewport Height Strategy
@@ -132,8 +159,8 @@
    * - Support: iOS Safari 15.4+, Chrome 108+, Firefox 110+
    */
 
-  /* Vintage font imports for era aesthetics */
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@400;600&family=Inconsolata:wght@400;700&display=swap');
+  /* Modern serif typography - Fraunces for elegant, versatile design */
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
 
   /* Premium Animations */
   @keyframes timeline-pulse {

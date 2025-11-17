@@ -12,10 +12,10 @@ export default function CharacterSelector({ onSelectCharacter }: CharacterSelect
     <div className="flex-1 py-4 md:py-6 px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-16">
       <div className="w-full">
         <div className="mb-4 md:mb-6">
-          <h2 className="text-xl md:text-2xl font-semibold mb-2 text-foreground" style={{ fontFamily: "'Cinzel', serif" }}>
+          <h2 className="text-xl md:text-2xl font-semibold mb-2 text-foreground">
             Select Your Guide
           </h2>
-          <p className="text-foreground/50 text-xs md:text-sm">
+          <p className="text-foreground/60 text-sm md:text-base">
             Choose a character to begin your conversation
           </p>
         </div>
