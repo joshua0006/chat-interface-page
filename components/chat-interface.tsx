@@ -2,12 +2,19 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { characterData } from '@/lib/character-data';
+import { characterData, generateSystemPrompt } from '@/lib/character-data';
 import ChatMessage from './chat-message';
 import CharacterProfile from './character-profile';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Send, Sparkles, MessageCircle, User } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
+import {
+  createConversation,
+  sendMessage,
+  getConversationId,
+  saveConversationId,
+  type StreamChunk,
+} from '@/lib/api-client';
 
 interface ChatInterfaceProps {
   characterId: string;
@@ -27,7 +34,11 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showProfile, setShowProfile] = useState(true);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [streamingMessage, setStreamingMessage] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -35,22 +46,34 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, streamingMessage]);
 
-  // Initialize with character greeting
+  // Initialize conversation and greeting
   useEffect(() => {
-    const greeting: Message = {
-      id: '0',
-      role: 'assistant',
-      content: character.greeting,
-      timestamp: new Date(),
+    const initializeConversation = async () => {
+      // Check if we have an existing conversation for this character
+      const existingConvId = getConversationId(character.id);
+
+      if (existingConvId) {
+        setConversationId(existingConvId);
+      }
+
+      // Always show greeting as first message
+      const greeting: Message = {
+        id: '0',
+        role: 'assistant',
+        content: character.greeting,
+        timestamp: new Date(),
+      };
+      setMessages([greeting]);
     };
-    setMessages([greeting]);
+
+    initializeConversation();
   }, [character]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -62,23 +85,82 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    setError(null);
+    setStreamingMessage('');
 
-    // Simulate character response with personality
-    setTimeout(() => {
-      const responses = character.sampleResponses;
-      const responseText = responses[Math.floor(Math.random() * responses.length)];
+    // Create abort controller for this request
+    abortControllerRef.current = new AbortController();
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: responseText,
-        timestamp: new Date(),
-      };
+    try {
+      // Create conversation if this is the first message
+      let currentConvId = conversationId;
+      if (!currentConvId) {
+        currentConvId = await createConversation();
+        setConversationId(currentConvId);
+        saveConversationId(character.id, currentConvId);
+      }
 
-      setMessages(prev => [...prev, assistantMessage]);
+      // Generate system prompt for this character
+      const systemPrompt = generateSystemPrompt(character);
+
+      // Send message and handle streaming response
+      await sendMessage(
+        {
+          message: input,
+          conversationId: currentConvId,
+          systemPrompt,
+        },
+        (chunk: StreamChunk) => {
+          if (chunk.type === 'conversationId' && chunk.conversationId) {
+            // Update conversation ID if we get a new one
+            if (!conversationId) {
+              setConversationId(chunk.conversationId);
+              saveConversationId(character.id, chunk.conversationId);
+            }
+          } else if (chunk.type === 'content' && chunk.content) {
+            // Accumulate streaming content
+            setStreamingMessage(prev => prev + chunk.content);
+          } else if (chunk.type === 'done') {
+            // Streaming complete - create final message
+            setStreamingMessage(current => {
+              if (current) {
+                const assistantMessage: Message = {
+                  id: (Date.now() + 1).toString(),
+                  role: 'assistant',
+                  content: current,
+                  timestamp: new Date(),
+                };
+                setMessages(prev => [...prev, assistantMessage]);
+              }
+              return '';
+            });
+            setIsLoading(false);
+          }
+        },
+        (error: Error) => {
+          console.error('Error sending message:', error);
+          setError(error.message);
+          setIsLoading(false);
+          setStreamingMessage('');
+        },
+        abortControllerRef.current.signal
+      );
+    } catch (error) {
+      console.error('Error in handleSendMessage:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred');
       setIsLoading(false);
-    }, 800);
+      setStreamingMessage('');
+    }
   };
+
+  // Cleanup abort controller on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const eraColors: Record<string, { bg: string; border: string; text: string }> = {
     ancient: { bg: 'bg-amber-500/5', border: 'border-amber-500/30', text: 'text-amber-500' },
@@ -244,7 +326,39 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
               <ChatMessage key={message.id} message={message} character={character} index={index} />
             ))}
             <AnimatePresence>
-              {isLoading && (
+              {/* Streaming message (typewriter effect) */}
+              {streamingMessage && (
+                <motion.div
+                  className="flex justify-start py-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className="flex gap-3 items-start max-w-[85%]">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-card border border-border overflow-hidden">
+                      <Image
+                        src={character.avatar}
+                        alt={character.name}
+                        width={32}
+                        height={32}
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 px-4 py-3 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/50">
+                      <p className="text-sm md:text-base text-foreground whitespace-pre-wrap">
+                        {streamingMessage}
+                        <motion.span
+                          className="inline-block w-1 h-4 ml-1 bg-primary"
+                          animate={{ opacity: [1, 0] }}
+                          transition={{ duration: 0.8, repeat: Infinity }}
+                        />
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+              {/* Loading indicator (before streaming starts) */}
+              {isLoading && !streamingMessage && (
                 <motion.div
                   className="flex justify-start py-4"
                   initial={{ opacity: 0, y: 10 }}
@@ -267,6 +381,26 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
                       animate={{ scale: [1, 1.3, 1] }}
                       transition={{ duration: 0.6, repeat: Infinity, delay: 0.3 }}
                     />
+                  </div>
+                </motion.div>
+              )}
+              {/* Error message */}
+              {error && (
+                <motion.div
+                  className="flex justify-center py-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <div className="px-4 py-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm max-w-md">
+                    <p className="font-semibold mb-1">Error</p>
+                    <p>{error}</p>
+                    <button
+                      onClick={() => setError(null)}
+                      className="mt-2 text-xs underline hover:no-underline"
+                    >
+                      Dismiss
+                    </button>
                   </div>
                 </motion.div>
               )}

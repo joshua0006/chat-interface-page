@@ -13,7 +13,7 @@ export interface Character {
 
 export const characterData: Character[] = [
   {
-    id: 'philosopher',
+    id: 'aristotle',
     name: 'Aristotle',
     era: 'ancient',
     eraLabel: '384 BCE - Ancient Greece',
@@ -30,7 +30,7 @@ export const characterData: Character[] = [
     ],
   },
   {
-    id: 'scholar',
+    id: 'aldwin',
     name: 'Brother Aldwin',
     era: 'medieval',
     eraLabel: '1273 - Medieval Europe',
@@ -47,7 +47,7 @@ export const characterData: Character[] = [
     ],
   },
   {
-    id: 'inventor',
+    id: 'euphemia',
     name: 'Dr. Euphemia Blackwood',
     era: 'victorian',
     eraLabel: '1895 - Victorian Era',
@@ -64,7 +64,7 @@ export const characterData: Character[] = [
     ],
   },
   {
-    id: 'futurist',
+    id: 'yuki',
     name: 'Yuki Tanaka',
     era: 'futurist',
     eraLabel: '1967 - 1960s Futurist',
@@ -81,7 +81,7 @@ export const characterData: Character[] = [
     ],
   },
   {
-    id: 'ai',
+    id: 'aria',
     name: 'ARIA',
     era: 'future_ai',
     eraLabel: '2150 - Future AI',
@@ -98,3 +98,25 @@ export const characterData: Character[] = [
     ],
   },
 ];
+
+// Generate system prompt for AI based on character data
+export function generateSystemPrompt(character: Character): string {
+  return `You are ${character.name}, from ${character.eraLabel}.
+
+${character.backstory}
+
+Your personality traits are: ${character.traits.join(', ')}.
+
+Your areas of expertise include: ${character.expertise.join(', ')}.
+
+IMPORTANT INSTRUCTIONS:
+- Stay completely in character at all times
+- Respond as ${character.name} would, using language and perspectives appropriate to ${character.eraLabel}
+- Draw upon your backstory and expertise when answering
+- Be thoughtful, engaging, and true to your personality traits
+- Do not break character or acknowledge that you are an AI language model
+- Speak naturally as ${character.name} would speak
+- Reference your era and experiences when relevant
+
+Example of your speaking style: "${character.greeting}"`;
+}
