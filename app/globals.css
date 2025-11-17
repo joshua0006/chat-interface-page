@@ -222,6 +222,44 @@
     }
   }
 
+  /* Timeline-specific animations */
+  @keyframes timeline-draw {
+    from {
+      stroke-dashoffset: 1000;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes timeline-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 4px currentColor);
+      opacity: 0.6;
+    }
+    50% {
+      filter: drop-shadow(0 0 12px currentColor);
+      opacity: 1;
+    }
+  }
+
+  @keyframes flow-particle {
+    from {
+      transform: translateX(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
   .timeline-pulse {
     animation: timeline-pulse 3s ease-in-out infinite;
   }
@@ -258,6 +296,31 @@
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  /* Smooth scrolling for timeline */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar for timeline */
+  .timeline-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-track {
+    background: oklch(var(--background) / 0.3);
+    border-radius: 4px;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-thumb {
+    background: oklch(var(--primary) / 0.3);
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .timeline-scroll::-webkit-scrollbar-thumb:hover {
+    background: oklch(var(--primary) / 0.5);
+  }
+
   /* Era-specific border styles */
   .era-border-ancient {
     @apply border-amber-700/30;
@@ -277,5 +340,18 @@
 
   .era-border-future-ai {
     @apply border-indigo-500/30;
+  }
+
+  /* Timeline animation utility classes */
+  .animate-timeline-draw {
+    animation: timeline-draw 1.5s ease-out forwards;
+  }
+
+  .animate-timeline-glow {
+    animation: timeline-glow 3s ease-in-out infinite;
+  }
+
+  .animate-flow-particle {
+    animation: flow-particle 2s linear infinite;
   }
 }
