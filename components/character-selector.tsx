@@ -97,16 +97,36 @@ export default function CharacterSelector({ onSelectCharacter }: CharacterSelect
             </div>
           </div>
 
-          {/* Tablet/Mobile: Scrollable horizontal cards */}
-          <div className="lg:hidden overflow-x-auto timeline-scroll pb-8 -mx-4 px-4 snap-x snap-mandatory">
-            <div className="flex gap-4 md:gap-6 min-w-max">
+          {/* Tablet/Mobile: Responsive grid layout */}
+          <div className="lg:hidden py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
               {characterData.map((character, index) => (
-                <div key={character.id} className="w-64 md:w-80 flex-shrink-0 snap-center">
+                <div
+                  key={character.id}
+                  className="relative"
+                >
+                  {/* Simplified timeline indicator */}
+                  {index > 0 && index % 2 === 0 && (
+                    <div className="absolute -top-2 left-0 right-0 flex items-center justify-center">
+                      <div className="h-px w-full bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+                    </div>
+                  )}
+
                   <CharacterCard
                     character={character}
                     onSelect={() => onSelectCharacter(character.id)}
                     index={index}
                   />
+
+                  {/* Era indicator dot */}
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1">
+                    <div
+                      className="w-2 h-2 rounded-full opacity-60"
+                      style={{
+                        backgroundColor: `oklch(var(--${character.era}))`
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>

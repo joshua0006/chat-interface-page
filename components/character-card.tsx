@@ -74,7 +74,7 @@ export default function CharacterCard({ character, onSelect, index = 0 }: Charac
             width={800}
             height={800}
             className="w-full h-auto"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 20vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
           />
         </div>
 
