@@ -5,6 +5,51 @@ import React from 'react'
 export function BackgroundLayers() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Static Geometric Pattern Layer - Dot Grid */}
+      <div
+        className="absolute inset-0 opacity-[0.15] dark:opacity-[0.08]"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at center, currentColor 1px, transparent 1px)
+          `,
+          backgroundSize: '32px 32px',
+        }}
+      />
+
+      {/* Static Geometric Pattern Layer - Fine Dot Grid Overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.08] dark:opacity-[0.04]"
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at center, currentColor 0.5px, transparent 0.5px)
+          `,
+          backgroundSize: '16px 16px',
+        }}
+      />
+
+      {/* Static Geometric Pattern Layer - Diagonal Lines */}
+      <div
+        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.02]"
+        style={{
+          backgroundImage: `
+            repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 48px,
+              currentColor 48px,
+              currentColor 49px
+            ),
+            repeating-linear-gradient(
+              -45deg,
+              transparent,
+              transparent 48px,
+              currentColor 48px,
+              currentColor 49px
+            )
+          `,
+        }}
+      />
+
       {/* Base Texture Layer - Fine grain/noise */}
       <div
         className="absolute inset-0 animate-drift-slow"
