@@ -236,9 +236,9 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
         <div className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent`} />
       </motion.div>
 
-      <div className="flex-1 overflow-hidden flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 w-full px-4 md:px-6 lg:px-8 xl:px-12 py-4 md:py-6">
+      <div className="flex-1 overflow-hidden flex flex-col md:flex-row w-full">
         {/* Chat Messages */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden px-4 md:px-6 lg:px-8 xl:pl-12 xl:pr-8 py-4 md:py-6">
           <div className="flex-1 overflow-y-auto pr-2 md:pr-4 space-y-2">
             {messages.map((message, index) => (
               <ChatMessage key={message.id} message={message} character={character} index={index} />
