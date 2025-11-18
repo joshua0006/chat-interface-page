@@ -1,8 +1,39 @@
 "use client"
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+
+interface Particle {
+  top: number
+  left: number
+  delay: number
+  duration: number
+}
 
 export function BackgroundLayers() {
+  const [smallParticles, setSmallParticles] = useState<Particle[]>([])
+  const [largeParticles, setLargeParticles] = useState<Particle[]>([])
+
+  useEffect(() => {
+    // Generate particle properties on client side only
+    setSmallParticles(
+      Array.from({ length: 12 }, (_, i) => ({
+        top: Math.random() * 100,
+        left: -10 + Math.random() * 20,
+        delay: i * 2.5,
+        duration: 25 + Math.random() * 15,
+      }))
+    )
+
+    setLargeParticles(
+      Array.from({ length: 6 }, (_, i) => ({
+        top: Math.random() * 100,
+        left: -10 + Math.random() * 20,
+        delay: i * 5,
+        duration: 40 + Math.random() * 20,
+      }))
+    )
+  }, [])
+
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {/* Static Geometric Pattern Layer - Dot Grid */}
@@ -174,29 +205,29 @@ export function BackgroundLayers() {
         className="absolute inset-0"
         style={{ opacity: 'var(--bg-particle-opacity)' }}
       >
-        {[...Array(12)].map((_, i) => (
+        {smallParticles.map((particle, i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-primary/40 rounded-full animate-particle-drift"
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${-10 + Math.random() * 20}%`,
-              animationDelay: `${i * 2.5}s`,
-              animationDuration: `${25 + Math.random() * 15}s`,
+              top: `${particle.top}%`,
+              left: `${particle.left}%`,
+              animationDelay: `${particle.delay}s`,
+              animationDuration: `${particle.duration}s`,
             }}
           />
         ))}
 
         {/* Larger, slower particles */}
-        {[...Array(6)].map((_, i) => (
+        {largeParticles.map((particle, i) => (
           <div
             key={`large-${i}`}
             className="absolute w-2 h-2 bg-primary/20 rounded-full animate-particle-drift"
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${-10 + Math.random() * 20}%`,
-              animationDelay: `${i * 5}s`,
-              animationDuration: `${40 + Math.random() * 20}s`,
+              top: `${particle.top}%`,
+              left: `${particle.left}%`,
+              animationDelay: `${particle.delay}s`,
+              animationDuration: `${particle.duration}s`,
             }}
           />
         ))}

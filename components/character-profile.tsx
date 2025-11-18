@@ -21,7 +21,7 @@ export default function CharacterProfile({ character }: CharacterProfileProps) {
 
   return (
     <motion.div
-      className={`w-full md:w-72 lg:w-80 p-6 border ${eraStyle.border} ${eraStyle.bg} backdrop-blur-lg bg-card/50 shadow-lg h-full overflow-y-auto`}
+      className={`w-full md:w-72 lg:w-80 p-6 border-l border-r border-b ${eraStyle.border} ${eraStyle.bg} backdrop-blur-lg bg-card/50 shadow-lg h-full overflow-y-auto`}
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}

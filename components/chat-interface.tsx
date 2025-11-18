@@ -39,6 +39,8 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const isDoneProcessedRef = useRef<boolean>(false);
+  const streamingContentRef = useRef<string>('');
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -76,7 +78,7 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       role: 'user',
       content: input,
       timestamp: new Date(),
@@ -87,9 +89,13 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
     setIsLoading(true);
     setError(null);
     setStreamingMessage('');
+    streamingContentRef.current = '';
 
     // Create abort controller for this request
     abortControllerRef.current = new AbortController();
+
+    // Reset done processing guard for new message
+    isDoneProcessedRef.current = false;
 
     try {
       // Create conversation if this is the first message
@@ -112,29 +118,50 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
         },
         (chunk: StreamChunk) => {
           if (chunk.type === 'conversationId' && chunk.conversationId) {
-            // Update conversation ID if we get a new one
-            if (!conversationId) {
-              setConversationId(chunk.conversationId);
-              saveConversationId(character.id, chunk.conversationId);
-            }
-          } else if (chunk.type === 'content' && chunk.content) {
-            // Accumulate streaming content
-            setStreamingMessage(prev => prev + chunk.content);
-          } else if (chunk.type === 'done') {
-            // Streaming complete - create final message
-            setStreamingMessage(current => {
-              if (current) {
-                const assistantMessage: Message = {
-                  id: (Date.now() + 1).toString(),
-                  role: 'assistant',
-                  content: current,
-                  timestamp: new Date(),
-                };
-                setMessages(prev => [...prev, assistantMessage]);
+            // Update conversation ID if we get a new one (use functional update to avoid stale closure)
+            setConversationId(prev => {
+              if (!prev && chunk.conversationId) {
+                saveConversationId(character.id, chunk.conversationId);
+                return chunk.conversationId;
               }
-              return '';
+              return prev;
             });
+          } else if (chunk.type === 'content' && chunk.content) {
+            // Accumulate streaming content in ref (imperative, no closure issues)
+            streamingContentRef.current += chunk.content;
+            // Update state to trigger UI re-render (typewriter effect)
+            setStreamingMessage(streamingContentRef.current);
+          } else if (chunk.type === 'done') {
+            // Guard against duplicate 'done' events
+            if (isDoneProcessedRef.current) {
+              console.warn('[DUPLICATE GUARD] Blocked duplicate done event');
+              return;
+            }
+            isDoneProcessedRef.current = true;
+            console.log('[DONE HANDLER] Processing done event');
+
+            // Streaming complete - finalize message
+            // Read from ref (guaranteed current value, no closure staleness)
+            const finalContent = streamingContentRef.current;
+
+            // Clear streaming state and ref
+            streamingContentRef.current = '';
+            setStreamingMessage('');
             setIsLoading(false);
+
+            // Add final message OUTSIDE any state updater (React 19-safe, idempotent)
+            if (finalContent) {
+              const assistantMessage: Message = {
+                id: crypto.randomUUID(),
+                role: 'assistant',
+                content: finalContent,
+                timestamp: new Date(),
+              };
+              console.log('[DONE HANDLER] Adding message, length:', finalContent.length);
+              setMessages(prev => [...prev, assistantMessage]);
+            } else {
+              console.warn('[DONE HANDLER] No content to add');
+            }
           }
         },
         (error: Error) => {
