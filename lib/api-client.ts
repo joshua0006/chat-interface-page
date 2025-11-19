@@ -77,7 +77,14 @@ export async function sendMessage(
   onError: (error: Error) => void,
   abortSignal?: AbortSignal
 ): Promise<void> {
+  const startTime = Date.now();
+  let receivedDoneChunk = false;
+  let totalBytesReceived = 0;
+  let contentChunksReceived = 0;
+
   try {
+    console.log('[API] Starting request at', new Date().toISOString());
+
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
       headers: {
@@ -103,11 +110,24 @@ export async function sendMessage(
       const { done, value } = await reader.read();
 
       if (done) {
+        const elapsedTime = Date.now() - startTime;
+        console.log('[API] Stream ended naturally after', elapsedTime, 'ms');
+        console.log('[API] Total bytes received:', totalBytesReceived);
+        console.log('[API] Content chunks received:', contentChunksReceived);
+        console.log('[API] Received done chunk:', receivedDoneChunk);
+
+        // If stream ended without 'done' chunk, send one manually
+        if (!receivedDoneChunk) {
+          console.warn('[API] Stream ended without done chunk - sending manual done signal');
+          onChunk({ type: 'done' });
+        }
         break;
       }
 
       // Decode the chunk and add to buffer
-      buffer += decoder.decode(value, { stream: true });
+      const decodedChunk = decoder.decode(value, { stream: true });
+      totalBytesReceived += value.byteLength;
+      buffer += decodedChunk;
 
       // Process complete lines (SSE format: "data: {...}\n\n")
       const lines = buffer.split('\n');
@@ -127,6 +147,15 @@ export async function sendMessage(
         if (jsonStr) {
           try {
             const chunk: StreamChunk = JSON.parse(jsonStr);
+
+            // Track chunk types
+            if (chunk.type === 'content') {
+              contentChunksReceived++;
+            } else if (chunk.type === 'done') {
+              receivedDoneChunk = true;
+              console.log('[API] Received done chunk after', contentChunksReceived, 'content chunks');
+            }
+
             onChunk(chunk);
 
             // If error chunk, throw error
@@ -134,15 +163,20 @@ export async function sendMessage(
               throw new Error(chunk.error || 'Unknown error from API');
             }
           } catch (parseError) {
-            console.error('Error parsing chunk:', parseError, 'Raw:', jsonStr);
+            console.error('[API] Error parsing chunk:', parseError, 'Raw:', jsonStr);
           }
         }
       }
     }
   } catch (error) {
+    const elapsedTime = Date.now() - startTime;
+    console.error('[API] Error after', elapsedTime, 'ms:', error);
+    console.error('[API] Received done chunk before error:', receivedDoneChunk);
+    console.error('[API] Content chunks received before error:', contentChunksReceived);
+
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        console.log('Request aborted');
+        console.log('[API] Request aborted by user');
         return; // Don't treat abort as error
       }
       onError(error);

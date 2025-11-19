@@ -110,6 +110,7 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
       const systemPrompt = generateSystemPrompt(character);
 
       // Send message and handle streaming response
+      console.log('[CHAT] Starting message send');
       await sendMessage(
         {
           message: input,
@@ -118,6 +119,7 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
         },
         (chunk: StreamChunk) => {
           if (chunk.type === 'conversationId' && chunk.conversationId) {
+            console.log('[CHAT] Received conversationId:', chunk.conversationId);
             // Update conversation ID if we get a new one (use functional update to avoid stale closure)
             setConversationId(prev => {
               if (!prev && chunk.conversationId) {
@@ -144,6 +146,10 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
             // Read from ref (guaranteed current value, no closure staleness)
             const finalContent = streamingContentRef.current;
 
+            console.log('[DONE HANDLER] Final content length:', finalContent.length);
+            console.log('[DONE HANDLER] Final content preview:', finalContent.substring(0, 100) + '...');
+            console.log('[DONE HANDLER] Final content ending:', '...' + finalContent.substring(finalContent.length - 100));
+
             // Clear streaming state and ref
             streamingContentRef.current = '';
             setStreamingMessage('');
@@ -157,7 +163,7 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
                 content: finalContent,
                 timestamp: new Date(),
               };
-              console.log('[DONE HANDLER] Adding message, length:', finalContent.length);
+              console.log('[DONE HANDLER] Adding message to state');
               setMessages(prev => [...prev, assistantMessage]);
             } else {
               console.warn('[DONE HANDLER] No content to add');
@@ -165,13 +171,15 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
           }
         },
         (error: Error) => {
-          console.error('Error sending message:', error);
+          console.error('[CHAT] Error sending message:', error);
+          console.error('[CHAT] Streaming content at error:', streamingContentRef.current.length, 'chars');
           setError(error.message);
           setIsLoading(false);
           setStreamingMessage('');
         },
         abortControllerRef.current.signal
       );
+      console.log('[CHAT] Message send completed');
     } catch (error) {
       console.error('Error in handleSendMessage:', error);
       setError(error instanceof Error ? error.message : 'An error occurred');
