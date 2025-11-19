@@ -6,7 +6,7 @@ import { characterData, generateSystemPrompt } from '@/lib/character-data';
 import ChatMessage from './chat-message';
 import CharacterProfile from './character-profile';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Sparkles, MessageCircle, User } from 'lucide-react';
+import { ArrowLeft, Send, MessageCircle, User } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import {
   createConversation,
@@ -282,12 +282,15 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
                   >
                     {character.name}
                   </motion.h1>
+
                   <motion.div
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
                   >
-                    <Sparkles className={`w-4 h-4 md:w-5 md:h-5 ${eraStyle.text}`} />
+                    <span className={`text-xl md:text-2xl ${eraStyle.text}`}>
+                      {eraIcons[character.era]}
+                    </span>
                   </motion.div>
                 </div>
 
