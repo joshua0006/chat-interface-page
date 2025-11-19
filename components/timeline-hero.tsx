@@ -8,7 +8,7 @@ export default function TimelineHero() {
           ChronoChat
         </h1>
         <p className="text-sm md:text-base text-foreground/60 max-w-2xl mx-auto">
-          Journey through different eras and engage in conversations that transcend time
+          From ancient philosophers to futuristic AI minds, each conversation opens a window into a different time period. Explore diverse perspectives, discover timeless wisdom, and see how ideas evolve across the ages.
         </p>
       </div>
     </div>

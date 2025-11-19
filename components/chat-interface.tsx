@@ -197,6 +197,14 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
     future_ai: { bg: 'bg-indigo-500/5', border: 'border-indigo-500/30', text: 'text-indigo-400' },
   };
 
+  const eraIcons: Record<string, string> = {
+    ancient: '⚱',
+    medieval: '⚔',
+    victorian: '🎩',
+    futurist: '🚀',
+    future_ai: '⚡',
+  };
+
   const eraStyle = eraColors[character.era];
 
   return (
@@ -355,12 +363,7 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
             <AnimatePresence>
               {/* Streaming message (typewriter effect) */}
               {streamingMessage && (
-                <motion.div
-                  className="flex justify-start py-4"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
+                <div className="flex justify-start py-4">
                   <div className="flex gap-3 items-start max-w-[85%]">
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-card border border-border overflow-hidden">
                       <Image
@@ -371,8 +374,13 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 px-4 py-3 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/50">
-                      <p className="text-sm md:text-base text-foreground whitespace-pre-wrap">
+                    <div className="flex-1 px-4 py-3 rounded-2xl shadow-sm bg-card/80 backdrop-blur-sm border border-border/50 text-foreground rounded-bl-md">
+                      <div className="flex items-center gap-2 mb-2 text-xs opacity-70">
+                        <span className="text-base">{eraIcons[character.era]}</span>
+                        <span className="font-medium">{character.name}</span>
+                        <span className="text-foreground/50 ml-auto text-[10px]">Now</span>
+                      </div>
+                      <p className="text-sm md:text-base leading-relaxed">
                         {streamingMessage}
                         <motion.span
                           className="inline-block w-1 h-4 ml-1 bg-primary"
@@ -382,7 +390,7 @@ export default function ChatInterface({ characterId, onBack }: ChatInterfaceProp
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
               {/* Loading indicator (before streaming starts) */}
               {isLoading && !streamingMessage && (
